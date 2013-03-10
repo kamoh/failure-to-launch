@@ -1,17 +1,17 @@
 display.setStatusBar(display.HiddenStatusBar)
 local displayGroup = display.newGroup()
 
-local physics = require "physics"
-physics.setDrawMode("hybrid")
---physics.setScale( 60 ) -- a value that seems good for small objects (based on playtesting)
-physics.start()
-physics.setGravity( 0, 20 )
-
 local data = require "data"
 local worldData = data.getWorldData()
 
-local wallWidth = display.contentWidth * worldData.wallWidth
+local physics = require "physics"
+physics.start()
+physics.setDrawMode("hybrid")
+physics.setGravity(0, worldData.gravity)
+physics.setScale( worldData.physicsScale ) -- 60 seems good for small objects (based on playtesting)
+
 local wallLength = display.contentHeight * worldData.wallLength
+local wallWidth = display.contentWidth * worldData.wallWidth
 
 local leftWall = display.newRect(0, -wallLength, wallWidth, wallLength)
 local rightWall = display.newRect(display.contentWidth - wallWidth, -wallLength, wallWidth, wallLength)
@@ -23,10 +23,10 @@ displayGroup:insert(rightWall)
 displayGroup:insert(floor)
 displayGroup:insert(ceiling)
 
-physics.addBody(leftWall, "static", {bounce = 0.1})
-physics.addBody(rightWall, "static", {bounce = 0.1})
-physics.addBody(floor, "static", {bounce = 0.1, friction = 0.006})
-physics.addBody(ceiling, "static", {bounce = 0.1})
+physics.addBody(leftWall, "static", {bounce = worldData.bounce, friction = worldData.friction})
+physics.addBody(rightWall, "static", {bounce = worldData.bounce, friction = worldData.friction})
+physics.addBody(floor, "static", {bounce = worldData.bounce, friction = worldData.friction})
+physics.addBody(ceiling, "static", {bounce = worldData.bounce, friction = worldData.friction})
 
 local levelData = data.getLevelData()
 
@@ -36,22 +36,22 @@ for i = 1, #levelData do
 	local h = display.contentHeight
 
 	for key, object in pairs(levelData[i].platforms) do
-		local platform = display.newRect(object.x * w, -levelData[i].y * h, object.w * w, -object.h * h)
+		local platform = display.newRect(object.x * w, -levelData[i].y * h, object.w * w, -levelData[i].h * h)
 		platform.collType = "passthru"
 		displayGroup:insert(platform)
-		physics.addBody(platform, "static", {bounce = 0.1, friction = 0.006})
+		physics.addBody(platform, "static", {bounce = worldData.bounce, friction = worldData.friction})
 	end
 end
 
 -- Create cueball
 local cueball = display.newImage( "images/ball_white.png" )
-cueball.x = display.contentWidth/2
-cueball.y = -display.contentHeight*0.1
+cueball.x = display.contentWidth * worldData.cueballX
+cueball.y = -display.contentHeight * worldData.cueballY
 displayGroup:insert(cueball)
 
 physics.addBody(cueball, ballBody)
-cueball.linearDamping = 0.3
-cueball.angularDamping = 1.0
+cueball.linearDamping = worldData.linearDamping
+cueball.angularDamping = worldData.angularDamping
 cueball.isBullet = true -- force continuous collision detection, to stop really fast shots from passing through other balls
 cueball.color = "white"
 
@@ -156,10 +156,10 @@ local function update(event)
 		touchTimer = 0
 	end
 
-	displayGroup.y = -cueball.y + display.contentHeight * 0.8 -- camera follows cueball
+	displayGroup.y = -cueball.y + display.contentHeight * worldData.cameraOffset -- camera follows cueball
 end
 
-local function tempDoubleJump(event)
+local function multiJump(event)
 	if event.phase == "began" then
 		local dx = cueball.x - event.x
 		local dy = cueball.y - event.y + displayGroup.y
@@ -173,5 +173,5 @@ local function tempDoubleJump(event)
 	end
 end
 
-Runtime:addEventListener("touch", tempDoubleJump)
+Runtime:addEventListener("touch", multiJump)
 Runtime:addEventListener("enterFrame", update)
