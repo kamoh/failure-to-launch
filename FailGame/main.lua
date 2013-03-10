@@ -1,14 +1,39 @@
-display.setStatusBar(display.HiddenStatusBar)
-local displayGroup = display.newGroup()
-
 local data = require "data"
 local worldData = data.getWorldData()
 
 local physics = require "physics"
 physics.start()
-physics.setDrawMode("hybrid")
+--physics.setDrawMode("hybrid")
 physics.setGravity(0, worldData.gravity)
 physics.setScale( worldData.physicsScale ) -- 60 seems good for small objects (based on playtesting)
+
+display.setStatusBar(display.HiddenStatusBar)
+local displayGroup = display.newGroup()
+
+local backgrounds = {}
+local backgroundColor = 64
+local backgroundHeight = 167
+local numBackgrounds = display.contentHeight / backgroundHeight + 2
+
+for i = 0, numBackgrounds do
+	backgrounds[i] = display.newImage("images/layer1back2.png")
+	backgrounds[i].x = display.contentCenterX
+	backgrounds[i].y = i * -backgroundHeight - backgroundHeight/2
+	backgrounds[i]:setFillColor(backgroundColor, backgroundColor, backgroundColor)
+	displayGroup:insert(backgrounds[i])
+end
+
+local function moveBackground()
+	for i = 0, numBackgrounds do
+		if backgrounds[i].y - backgroundHeight * (numBackgrounds - 1) > -displayGroup.y then
+			backgrounds[i].y = backgrounds[i].y - backgroundHeight * numBackgrounds
+		end
+
+		if backgrounds[i].y + backgroundHeight * (numBackgrounds - 6) < -displayGroup.y then
+			backgrounds[i].y = backgrounds[i].y + backgroundHeight * numBackgrounds
+		end
+	end
+end
 
 local wallLength = display.contentHeight * worldData.wallLength
 local wallWidth = display.contentWidth * worldData.wallWidth
@@ -187,6 +212,7 @@ local function update(event)
 	end
 
 	displayGroup.y = -cueball.y + display.contentHeight * worldData.cameraOffset -- camera follows cueball
+	moveBackground()
 end
 
 Runtime:addEventListener("enterFrame", update)
