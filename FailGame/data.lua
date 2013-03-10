@@ -54,7 +54,7 @@ function getLevelData()
 		},
 	-- Level 3
 		{
-			job = "Indentured Servent",
+			job = "Indentured Servant",
 			y = 6.0,
 			h = 0.03,
 			platforms = {
@@ -70,7 +70,7 @@ function getLevelData()
 		},
 	-- Level 4
 		{
-			job = "Senior Indentured Servent",
+			job = "Senior Indentured Servant",
 			y = 8.0,
 			h = 0.02,
 			platforms = {
