@@ -74,7 +74,7 @@ physics.addBody(ceiling, "static", {bounce = worldData.bounce, friction = worldD
 local levelData = data.getLevelData()
 
 --Create platforms
-for i = 1, #levelData do
+for i = 2, #levelData do
 	local w = display.contentWidth
 	local h = display.contentHeight
 

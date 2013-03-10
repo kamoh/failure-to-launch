@@ -22,6 +22,11 @@ end
 
 function getLevelData()
 	local levelData = {
+	-- Level 0
+		{
+			job = "Janitor",
+			y = 0
+		},
 	-- Level 1
 		{
 			job = "Burger Monkey",
