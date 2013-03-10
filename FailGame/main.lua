@@ -121,8 +121,9 @@ displayGroup:insert(target)
 local isAirborne = false
 local jumpCount = 5
 local money = 0
-local platformTime = 60000 --One Minute, varies depending on if we're adding minigames.
+local platformTime = 60 --One Minute, varies depending on if we're adding minigames.
 local zeroTitle = "Janitor"
+local job = zeroTitle
 local hudBackground = display.newRect(0,display.contentHeight * 0.86,display.contentWidth, display.contentHeight * 0.20)
 hudBackground:setFillColor( 50,50,50,200 )
 local levelText = display.newText("Janitor",display.contentWidth * .5 ,display.contentHeight * .99,native.systemFont, 16*2)
@@ -141,6 +142,36 @@ local timerText = display.newText(platformTime/1000, 0,0, native.systemFont, 16*
 timerText:setReferencePoint(display.BottomReferencePoint)
 timerText.x = display.contentWidth * .5
 timerText.y = display.contentHeight * .01
+
+local lastTime = os.time()
+local curTime = os.time()
+local function updateHud()
+	if platformTime ~= 0 then
+		curTime = os.time()
+		platformTime = platformTime - os.difftime(curTime, lastTime)
+		-- print(platformTime)
+		timerText.text = (math.floor(platformTime))
+		lastTime = curTime
+	end
+
+	jumpText.text = jumpCount
+
+	if cueball.isAwake == false then --Add Toggle
+		for i=1 , #levelData do
+			print(i)
+			print("Current Y: " .. -(levelData[i].y * display.contentHeight))
+			print("Cueball Y: " .. cueball.y)
+			if cueball.y < -(levelData[i].y * display.contentHeight) then
+				job = levelData[i].job
+			elseif cueball.y >  -(levelData[i].y * display.contentHeight)  then
+				break
+			end
+			print(i)
+		end
+		moneyText.text = ("$" .. money)
+		levelText.text = job
+	end
+end
 
 -- Shoot the cue ball, using a visible force vector
 local function cueShot( event )
@@ -250,7 +281,7 @@ local function update(event)
 		touchTimer = touchTimer + 1
 	end
 	if touchTimer > 100 then
-		display.newText("Ya done goofed!",5,5,native.systemFont, 16*2)
+		-- display.newText("Ya done goofed!",5,5,native.systemFont, 16*2)
 		runTouchTime = false
 		touchTimer = 0
 		isAirborne = false
@@ -258,13 +289,14 @@ local function update(event)
 
 	displayGroup.y = -cueball.y + display.contentHeight * worldData.cameraOffset -- camera follows cueball
 	moveBackground()
+	updateHud()
 end
 
 Runtime:addEventListener("enterFrame", update)
 
 local function multiJump(event)
 --	if jumpCount ~= 0 and isAirborne == true then
-		if event.phase == "began" then
+		if event.phase == "began" and jumpCount > 0 then
 			jumpChannel = audio.play(jumpHandle)
 			local dx = cueball.x - event.x
 			local dy = cueball.y - event.y + displayGroup.y
