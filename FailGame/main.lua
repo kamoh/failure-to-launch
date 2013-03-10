@@ -99,14 +99,30 @@ target.alpha = 0
 displayGroup:insert(target)
 
 --Hud Components
--- local hudBackground = display.newRect()
-
 --Game restrictions
 local isAirborne = false
 local jumpCount = 5
 local money = 0
 local platformTime = 60000 --One Minute, varies depending on if we're adding minigames.
-local jobTitle = "Janitor"
+local zeroTitle = "Janitor"
+local hudBackground = display.newRect(0,display.contentHeight * 0.86,display.contentWidth, display.contentHeight * 0.20)
+hudBackground:setFillColor( 50,50,50,200 )
+local levelText = display.newText("Janitor",display.contentWidth * .5 ,display.contentHeight * .99,native.systemFont, 16*2)
+levelText:setReferencePoint(display.BottomReferencePoint)
+levelText.x = display.contentWidth * .5
+levelText.y = display.contentHeight * .99
+local jumpText = display.newText("x " .. jumpCount, display.contentWidth * .15, display.contentHeight * .90, native.systemFont, 16*2)
+local jumpIcon = display.newImage( "images/jumping_icon_white.png" )
+levelText:setReferencePoint(display.CenterReferencePoint)
+jumpIcon.x = display.contentWidth * .1
+jumpIcon.y = display.contentHeight * .90
+jumpIcon.xScale = .33
+jumpIcon.yScale = .33
+local moneyText = display.newText(("$" .. money),display.contentWidth * .4, display.contentHeight * .90, native.systemFont, 16*2)
+local timerText = display.newText(platformTime/1000, 0,0, native.systemFont, 16*2)
+timerText:setReferencePoint(display.BottomReferencePoint)
+timerText.x = display.contentWidth * .5
+timerText.y = display.contentHeight * .01
 
 -- Shoot the cue ball, using a visible force vector
 local function cueShot( event )
