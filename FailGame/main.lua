@@ -118,7 +118,7 @@ displayGroup:insert(target)
 --Hud Components
 --Game restrictions
 local isAirborne = false
-local jumpCount = 5
+local jumpCount = 1
 local money = 0
 local platformTime = 60 --One Minute, varies depending on if we're adding minigames.
 local zeroTitle = "LVL1: Retired Janitor"
@@ -167,7 +167,7 @@ local function updateHud()
 				local jumpcost = 50 * (i-1)
 				local c = 0
 				for c = 1, 5 do
-					if money > 50 then
+					if money > jumpcost then
 						money = money - jumpcost
 						jumpCount = jumpCount + 1
 					end
