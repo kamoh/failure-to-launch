@@ -29,6 +29,10 @@ function getLevelData()
 				{x = 0, w = 0.4},
 				{x = 0.6, w = 0.4},
 			},
+			pinkSlips = {
+				{x = 0.2, y = 0.5, s = 0.2},
+				{x = 0.5, y = 0.8, s = 0.1},
+			},
 		},
 	-- Level 2
 		{
@@ -38,7 +42,7 @@ function getLevelData()
 				{x = 0, w = 0.23},
 				{x = 0.4, w = 0.23},
 				{x = 0.8, w = 0.23},
-			}
+			},
 		},
 	-- Level 3
 		{
@@ -47,7 +51,7 @@ function getLevelData()
 			platforms = {
 				{x = 0.15, w = 0.24},
 				{x = 0.62, w = 0.24},
-			}
+			},
 		},
 	-- Level 4
 		{
@@ -56,7 +60,7 @@ function getLevelData()
 			platforms = {
 				{x = 0, w = 0.3},
 				{x = 0.5, w = 0.3},
-			}
+			},
 		},
 	-- Level 5
 		{
@@ -66,7 +70,7 @@ function getLevelData()
 				{x = 0, w = 0.15},
 				{x = 0.3, w = 0.3},
 				{x = 0.85, w = 0.3},
-			}
+			},
 		},
 	-- Level 6
 		{
@@ -76,7 +80,7 @@ function getLevelData()
 				{x = 0.23, w = 0.15},
 				{x = 0.53, w = 0.18},
 				{x = 0.85, w = 0.3},
-			}
+			},
 		},
 	-- Level 7
 		{
@@ -86,7 +90,7 @@ function getLevelData()
 				{x = 0, w = 0.15},
 				{x = 0.39, w = 0.20},
 				{x = 0.8, w = 0.23},
-			}
+			},
 		},
 	-- Level 8
 		{
@@ -96,7 +100,7 @@ function getLevelData()
 				{x = 0.23, w = 0.15},
 				{x = 0.56, w = 0.12},
 				{x = 0.85, w = 0.3},
-			}
+			},
 		},
 	-- Level 9
 		{
@@ -105,7 +109,7 @@ function getLevelData()
 			platforms = {
 				{x = 0.3, w = 0.15},
 				{x = 0.6, w = 0.15},
-			}
+			},
 		},
 	-- Level 10
 		{
@@ -113,7 +117,7 @@ function getLevelData()
 			h = 0.008,
 			platforms = {
 				{x = 0.45, w = 0.12},
-			}
+			},
 		},
 	}
 

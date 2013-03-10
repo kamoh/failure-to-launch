@@ -41,13 +41,16 @@ for i = 1, #levelData do
 		displayGroup:insert(platform)
 		physics.addBody(platform, "static", {bounce = worldData.bounce, friction = worldData.friction})
 	end
-end
 
--- Temporary Enemies
-local slip = display.newRect(100, -500, 100,100)
-slip.collType = "enemy"
-displayGroup:insert(slip)
-physics.addBody(slip, "static")
+	if levelData[i].pinkSlips then
+		for key, object in pairs(levelData[i].pinkSlips) do
+			local pinkSlip = display.newRect(object.x * w, -object.y * h, object.s * w, object.s * w)
+			pinkSlip.collType = "pinkSlip"
+			displayGroup:insert(pinkSlip)
+			physics.addBody(pinkSlip, "static")
+		end
+	end
+end
 
 -- Create cueball
 local cueball = display.newImage( "images/ball_white.png" )
@@ -77,11 +80,10 @@ local money = 0
 local platformTime = 60000 --One Minute, varies depending on if we're adding minigames.
 local jobTitle = "Janitor"
 
-
 -- Shoot the cue ball, using a visible force vector
 local function cueShot( event )
 	local t = event.target
-	if isAirborne == false then
+--	if isAirborne == false then
 		local phase = event.phase
 		if "began" == phase then
 			display.getCurrentStage():setFocus( t )
@@ -132,7 +134,7 @@ local function cueShot( event )
 				isAirborne = true
 			end
 		end
-	end
+--	end
 
 	-- Stop further propagation of touch event
 	return true
@@ -145,7 +147,7 @@ local function onPreCollision(event)
 	local collideObject = event.other
 	if ( collideObject.collType == "passthru" ) and ( collideObject.y < cueball.y) then
 		event.contact.isEnabled = false  --disable this specific collision!
-	elseif (collideObject.collType == "enemy" ) then
+	elseif (collideObject.collType == "pinkSlip" ) then
 		print("Through!")
 		event.contact.isEnabled = false  --disable this specific collision!
 		local x,y = cueball:getLinearVelocity()
@@ -189,7 +191,7 @@ end
 Runtime:addEventListener("enterFrame", update)
 
 local function multiJump(event)
-	if jumpCount ~= 0 and isAirborne == true then
+--	if jumpCount ~= 0 and isAirborne == true then
 		if event.phase == "began" then
 			local dx = cueball.x - event.x
 			local dy = cueball.y - event.y + displayGroup.y
@@ -205,9 +207,9 @@ local function multiJump(event)
 			
 			cueball:setLinearVelocity(0, 0)
 			cueball:applyLinearImpulse(-x, -y, cueball.x, cueball.y)
---			jumpCount = jumpCount - 1
+			jumpCount = jumpCount - 1
 		end
-	end
+--	end
 end
 
 Runtime:addEventListener("touch", multiJump)
