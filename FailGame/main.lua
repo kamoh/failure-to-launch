@@ -159,4 +159,19 @@ local function update(event)
 	displayGroup.y = -cueball.y + display.contentHeight * 0.8 -- camera follows cueball
 end
 
+local function tempDoubleJump(event)
+	if event.phase == "began" then
+		local dx = cueball.x - event.x
+		local dy = cueball.y - event.y + displayGroup.y
+
+		local a = math.atan2(dy, dx)
+		local x = math.cos(a)
+		local y = math.sin(a)
+		
+		cueball:setLinearVelocity(0, 0)
+		cueball:applyLinearImpulse(-x, -math.abs(y), cueball.x, cueball.y)
+	end
+end
+
+Runtime:addEventListener("touch", tempDoubleJump)
 Runtime:addEventListener("enterFrame", update)
