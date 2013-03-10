@@ -4,8 +4,8 @@ local displayGroup = display.newGroup()
 local physics = require "physics"
 physics.setDrawMode("hybrid")
 --physics.setScale( 60 ) -- a value that seems good for small objects (based on playtesting)
---physics.setGravity( 0, 0 )
 physics.start()
+physics.setGravity( 0, 20 )
 
 local data = require "data"
 local worldData = data.getWorldData()
@@ -25,7 +25,7 @@ displayGroup:insert(ceiling)
 
 physics.addBody(leftWall, "static", {bounce = 0.1})
 physics.addBody(rightWall, "static", {bounce = 0.1})
-physics.addBody(floor, "static", {bounce = 0.1})
+physics.addBody(floor, "static", {bounce = 0.1, friction = 0.006})
 physics.addBody(ceiling, "static", {bounce = 0.1})
 
 local levelData = data.getLevelData()
@@ -39,19 +39,19 @@ for i = 1, #levelData do
 		local platform = display.newRect(object.x * w, -levelData[i].y * h, object.w * w, -object.h * h)
 		platform.collType = "passthru"
 		displayGroup:insert(platform)
-		physics.addBody(platform, "static", {bounce = 0.1})
+		physics.addBody(platform, "static", {bounce = 0.1, friction = 0.006})
 	end
 end
 
 -- Create cueball
 local cueball = display.newImage( "images/ball_white.png" )
 cueball.x = display.contentWidth/2
-cueball.y = -display.contentHeight/2
+cueball.y = -display.contentHeight*0.1
 displayGroup:insert(cueball)
 
 physics.addBody(cueball, ballBody)
 cueball.linearDamping = 0.3
-cueball.angularDamping = 0.8
+cueball.angularDamping = 1.0
 cueball.isBullet = true -- force continuous collision detection, to stop really fast shots from passing through other balls
 cueball.color = "white"
 
