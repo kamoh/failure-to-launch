@@ -1,68 +1,57 @@
--- constants
-local wallWidth = 5
-local wallLength = 2
-
---timer variables
-local touchTimer = 0
-local runTouchTime = false
-
 local physics = require "physics"
-physics.start()
 physics.setDrawMode("hybrid")
-
 --physics.setScale( 60 ) -- a value that seems good for small objects (based on playtesting)
 --physics.setGravity( 0, 0 )
+physics.start()
 
-display.setStatusBar( display.HiddenStatusBar )
+local data = require "data"
+local props = data.getProps()
+local levelData = data.getLevelData()
 
-local game = display.newGroup()
+display.setStatusBar(display.HiddenStatusBar)
 
-local leftWall = display.newRect(0, -display.contentHeight * (wallLength - 1), wallWidth, display.contentHeight * wallLength)
-game:insert(leftWall)
-local rightWall = display.newRect(display.contentWidth - wallWidth, -display.contentHeight * (wallLength - 1), wallWidth, display.contentHeight * wallLength)
-game:insert(rightWall)
-local floor = display.newRect(0, display.contentHeight - wallWidth, display.contentWidth, wallWidth)
-game:insert(floor)
-local ceiling = display.newRect(0, -display.contentHeight * (wallLength - 1), display.contentWidth, wallWidth)
-game:insert(ceiling)
+local displayGroup = display.newGroup()
+
+local leftWall = display.newRect(0, -display.contentHeight * (props.wallLength - 1), props.wallWidth, display.contentHeight * props.wallLength)
+local rightWall = display.newRect(display.contentWidth - props.wallWidth, -display.contentHeight * (props.wallLength - 1), props.wallWidth, display.contentHeight * props.wallLength)
+local floor = display.newRect(0, display.contentHeight - props.wallWidth, display.contentWidth, props.wallWidth)
+local ceiling = display.newRect(0, -display.contentHeight * (props.wallLength - 1), display.contentWidth, props.wallWidth)
+
+displayGroup:insert(leftWall)
+displayGroup:insert(rightWall)
+displayGroup:insert(floor)
+displayGroup:insert(ceiling)
 
 physics.addBody(leftWall, "static", {bounce = 0.1})
 physics.addBody(rightWall, "static", {bounce = 0.1})
 physics.addBody(floor, "static", {bounce = 0.1})
 physics.addBody(ceiling, "static", {bounce = 0.1})
 
+--Create platforms
+for i = 1, #levelData do
+	local platform = display.newRect(levelData[i][1], levelData[i][2], levelData[i][3], levelData[i][4])
+	platform.collType = "passthru"
+	displayGroup:insert(platform)
+	physics.addBody(platform, "static", {bounce = 0.1})
+end
+
 -- Create cueball
 local cueball = display.newImage( "images/ball_white.png" )
 cueball.x = display.contentWidth/2
 cueball.y = display.contentHeight/2
-game:insert(cueball)
+displayGroup:insert(cueball)
 
-physics.addBody( cueball, ballBody )
+physics.addBody(cueball, ballBody)
 cueball.linearDamping = 0.3
 cueball.angularDamping = 0.8
 cueball.isBullet = true -- force continuous collision detection, to stop really fast shots from passing through other balls
 cueball.color = "white"
 
---Create platform
-local platform = display.newRect(100, 400, 100, 30)
-platform.collType = "passthru"
-game:insert(platform)
-physics.addBody(platform, "static", {bounce = 0.1})
-
-target = display.newImage( "images/target.png" )
+target = display.newImage("images/target.png")
 target.x = cueball.x
 target.y = cueball.y
 target.alpha = 0
-game:insert(target)
-
-local function resetCueball()
-	cueball.alpha = 0
-	cueball.x = 384
-	cueball.y = 780
-	cueball.xScale = 2.0
-	cueball.yScale = 2.0
-	local dropBall = transition.to( cueball, { alpha=1.0, xScale=1.0, yScale=1.0, time=400 } )
-end
+displayGroup:insert(target)
 
 -- Shoot the cue ball, using a visible force vector
 local function cueShot( event )
@@ -95,7 +84,7 @@ local function cueShot( event )
 			if ( myLine ) then
 				myLine.parent:remove( myLine ) -- erase previous line, if any
 			end
-			myLine = display.newLine( t.x, t.y + game.y, event.x, event.y)
+			myLine = display.newLine( t.x, t.y + displayGroup.y, event.x, event.y)
 			myLine:setColor( 255, 255, 255, 50 )
 			myLine.width = 8
 
@@ -114,7 +103,7 @@ local function cueShot( event )
 			end
 			
 			-- Strike the ball!
-			t:applyForce( (t.x - event.x), (t.y + game.y - event.y), t.x, t.y )
+			t:applyForce( (t.x - event.x), (t.y + displayGroup.y - event.y), t.x, t.y )
 		end
 	end
 
@@ -122,7 +111,22 @@ local function cueShot( event )
 	return true
 end
 
-cueball:addEventListener( "touch", cueShot )
+cueball:addEventListener("touch", cueShot)
+
+-- Local Player collision decision
+local function onPreCollision(event)
+	print("PRE")
+	local collideObject = event.other
+	if ( collideObject.collType == "passthru" ) and ( collideObject.y < cueball.y) then
+		event.contact.isEnabled = false  --disable this specific collision!
+	end
+end
+
+cueball:addEventListener("preCollision", onPreCollision)
+
+--timer variables
+local touchTimer = 0
+local runTouchTime = false
 
 --updates every frame
 local function update(event)
@@ -146,18 +150,7 @@ local function update(event)
 		touchTimer = 0
 	end
 
-	game.y = -cueball.y + display.contentHeight * 0.8
+	displayGroup.y = -cueball.y + display.contentHeight * 0.8
 end
 
--- Local Player collision decision
-local function onPreCollision(event)
-	print("PRE")
-	local collideObject = event.other
-	if ( collideObject.collType == "passthru" ) and ( collideObject.y < cueball.y) then
-		event.contact.isEnabled = false  --disable this specific collision!
-	end
-end
-
-cueball:addEventListener("preCollision", onPreCollision)
-
-Runtime:addEventListener( "enterFrame", update )
+Runtime:addEventListener("enterFrame", update)
