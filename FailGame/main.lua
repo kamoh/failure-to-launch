@@ -46,11 +46,12 @@ for i = 1, #levelData do
 		for key, object in pairs(levelData[i].pinkSlips) do
 --			local pinkSlip = display.newRect(object.x * w, -object.y * h, object.s * w, object.s * w)
 			local pinkSlip = display.newImage("images/pinkSlip.png")
-			pinkSlip:translate(object.x * w, -object.y * h)
 			pinkSlip:scale(object.s, object.s)
+			pinkSlip:translate(object.x * w, -object.y * h)
 			pinkSlip.collType = "pinkSlip"
 			displayGroup:insert(pinkSlip)
-			physics.addBody(pinkSlip, "static")
+			local r = pinkSlip.width / 2
+			physics.addBody(pinkSlip, "static", {radius = r * object.s})
 		end
 	end
 end
