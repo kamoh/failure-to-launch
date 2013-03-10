@@ -1,3 +1,6 @@
+display.setStatusBar(display.HiddenStatusBar)
+local displayGroup = display.newGroup()
+
 local physics = require "physics"
 physics.setDrawMode("hybrid")
 --physics.setScale( 60 ) -- a value that seems good for small objects (based on playtesting)
@@ -5,17 +8,15 @@ physics.setDrawMode("hybrid")
 physics.start()
 
 local data = require "data"
-local props = data.getProps()
-local levelData = data.getLevelData()
+local worldData = data.getWorldData()
 
-display.setStatusBar(display.HiddenStatusBar)
+local wallWidth = display.contentWidth * worldData.wallWidth
+local wallLength = display.contentHeight * worldData.wallLength
 
-local displayGroup = display.newGroup()
-
-local leftWall = display.newRect(0, -display.contentHeight * (props.wallLength - 1), props.wallWidth, display.contentHeight * props.wallLength)
-local rightWall = display.newRect(display.contentWidth - props.wallWidth, -display.contentHeight * (props.wallLength - 1), props.wallWidth, display.contentHeight * props.wallLength)
-local floor = display.newRect(0, display.contentHeight - props.wallWidth, display.contentWidth, props.wallWidth)
-local ceiling = display.newRect(0, -display.contentHeight * (props.wallLength - 1), display.contentWidth, props.wallWidth)
+local leftWall = display.newRect(0, -wallLength, wallWidth, wallLength)
+local rightWall = display.newRect(display.contentWidth - wallWidth, -wallLength, wallWidth, wallLength)
+local floor = display.newRect(0, 0, display.contentWidth, wallWidth)
+local ceiling = display.newRect(0, -wallLength, display.contentWidth, wallWidth)
 
 displayGroup:insert(leftWall)
 displayGroup:insert(rightWall)
@@ -27,18 +28,25 @@ physics.addBody(rightWall, "static", {bounce = 0.1})
 physics.addBody(floor, "static", {bounce = 0.1})
 physics.addBody(ceiling, "static", {bounce = 0.1})
 
+local levelData = data.getLevelData()
+
 --Create platforms
 for i = 1, #levelData do
-	local platform = display.newRect(levelData[i][1], levelData[i][2], levelData[i][3], levelData[i][4])
-	platform.collType = "passthru"
-	displayGroup:insert(platform)
-	physics.addBody(platform, "static", {bounce = 0.1})
+	local w = display.contentWidth
+	local h = display.contentHeight
+
+	for key, object in pairs(levelData[i].platforms) do
+		local platform = display.newRect(object.x * w, -levelData[i].y * h, object.w * w, -object.h * h)
+		platform.collType = "passthru"
+		displayGroup:insert(platform)
+		physics.addBody(platform, "static", {bounce = 0.1})
+	end
 end
 
 -- Create cueball
 local cueball = display.newImage( "images/ball_white.png" )
 cueball.x = display.contentWidth/2
-cueball.y = display.contentHeight/2
+cueball.y = -display.contentHeight/2
 displayGroup:insert(cueball)
 
 physics.addBody(cueball, ballBody)
@@ -115,7 +123,6 @@ cueball:addEventListener("touch", cueShot)
 
 -- Local Player collision decision
 local function onPreCollision(event)
-	print("PRE")
 	local collideObject = event.other
 	if ( collideObject.collType == "passthru" ) and ( collideObject.y < cueball.y) then
 		event.contact.isEnabled = false  --disable this specific collision!
@@ -132,7 +139,6 @@ local runTouchTime = false
 local function update(event)
 	local xVel = 0;
 	local yvel = 0;
-	print(cueball:getLinearVelocity())
 	xVel,yVel = cueball:getLinearVelocity()
 	if (yVel < 5 and runTouchTime == false) then
 		runTouchTime = true
@@ -150,7 +156,7 @@ local function update(event)
 		touchTimer = 0
 	end
 
-	displayGroup.y = -cueball.y + display.contentHeight * 0.8
+	displayGroup.y = -cueball.y + display.contentHeight * 0.8 -- camera follows cueball
 end
 
 Runtime:addEventListener("enterFrame", update)
