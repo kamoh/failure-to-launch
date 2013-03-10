@@ -13,6 +13,7 @@ function getWorldData()
 		linearDamping = 0.3,
 		angularDamping = 1.0,
 		cameraOffset = 0.8,
+		jumpImpulse = 1.0,
 	}
 
 	return worldData

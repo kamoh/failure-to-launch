@@ -70,8 +70,6 @@ displayGroup:insert(target)
 --Hud Components
 -- local hudBackground = display.newRect()
 
-
-
 --Game restrictions
 local isAirborne = false
 local jumpCount = 5
@@ -197,12 +195,17 @@ local function multiJump(event)
 			local dy = cueball.y - event.y + displayGroup.y
 
 			local a = math.atan2(dy, dx)
-			local x = math.cos(a)
-			local y = math.sin(a)
+			local x = math.cos(a) * worldData.jumpImpulse
+			local y = math.sin(a) * worldData.jumpImpulse
+
+			if y < 0 then
+				x = x * -1
+				y = y * -1
+			end
 			
 			cueball:setLinearVelocity(0, 0)
-			cueball:applyLinearImpulse(-x, -math.abs(y), cueball.x, cueball.y)
-			jumpCount = jumpCount - 1
+			cueball:applyLinearImpulse(-x, -y, cueball.x, cueball.y)
+--			jumpCount = jumpCount - 1
 		end
 	end
 end
