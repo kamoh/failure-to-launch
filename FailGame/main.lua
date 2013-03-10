@@ -43,6 +43,12 @@ for i = 1, #levelData do
 	end
 end
 
+-- Temporary Enemies
+local slip = display.newRect(100, -500, 100,100)
+slip.collType = "enemy"
+displayGroup:insert(slip)
+physics.addBody(slip, "static")
+
 -- Create cueball
 local cueball = display.newImage( "images/ball_white.png" )
 cueball.x = display.contentWidth * worldData.cueballX
@@ -61,57 +67,72 @@ target.y = cueball.y
 target.alpha = 0
 displayGroup:insert(target)
 
+--Hud Components
+-- local hudBackground = display.newRect()
+
+
+
+--Game restrictions
+local isAirborne = false
+local jumpCount = 5
+local money = 0
+local platformTime = 60000 --One Minute, varies depending on if we're adding minigames.
+local jobTitle = "Janitor"
+
+
 -- Shoot the cue ball, using a visible force vector
 local function cueShot( event )
 	local t = event.target
-
-	local phase = event.phase
-	if "began" == phase then
-		display.getCurrentStage():setFocus( t )
-		t.isFocus = true
-		
-		-- Stop current cueball motion, if any
-		t:setLinearVelocity( 0, 0 )
-		t.angularVelocity = 0
-
-		target.x = t.x
-		target.y = t.y
-		
-		startRotation = function()
-			target.rotation = target.rotation + 4
-		end
-		
-		Runtime:addEventListener( "enterFrame", startRotation )
-		
-		local showTarget = transition.to( target, { alpha=0.4, xScale=0.4, yScale=0.4, time=200 } )
-		myLine = nil
-
-	elseif t.isFocus then
-		if "moved" == phase then
+	if isAirborne == false then
+		local phase = event.phase
+		if "began" == phase then
+			display.getCurrentStage():setFocus( t )
+			t.isFocus = true
 			
-			if ( myLine ) then
-				myLine.parent:remove( myLine ) -- erase previous line, if any
-			end
-			myLine = display.newLine( t.x, t.y + displayGroup.y, event.x, event.y)
-			myLine:setColor( 255, 255, 255, 50 )
-			myLine.width = 8
+			-- Stop current cueball motion, if any
+			t:setLinearVelocity( 0, 0 )
+			t.angularVelocity = 0
 
-		elseif "ended" == phase or "cancelled" == phase then
-			display.getCurrentStage():setFocus( nil )
-			t.isFocus = false
+			target.x = t.x
+			target.y = t.y
 			
-			local stopRotation = function()
-				Runtime:removeEventListener( "enterFrame", startRotation )
+			startRotation = function()
+				target.rotation = target.rotation + 4
 			end
 			
-			local hideTarget = transition.to( target, { alpha=0, xScale=1.0, yScale=1.0, time=200, onComplete=stopRotation } )
+			Runtime:addEventListener( "enterFrame", startRotation )
 			
-			if ( myLine ) then
-				myLine.parent:remove( myLine )
+			local showTarget = transition.to( target, { alpha=0.4, xScale=0.4, yScale=0.4, time=200 } )
+			myLine = nil
+
+		elseif t.isFocus then
+			if "moved" == phase then
+				
+				if ( myLine ) then
+					myLine.parent:remove( myLine ) -- erase previous line, if any
+				end
+				myLine = display.newLine( t.x, t.y + displayGroup.y, event.x, event.y)
+				myLine:setColor( 255, 255, 255, 50 )
+				myLine.width = 8
+
+			elseif "ended" == phase or "cancelled" == phase then
+				display.getCurrentStage():setFocus( nil )
+				t.isFocus = false
+				
+				local stopRotation = function()
+					Runtime:removeEventListener( "enterFrame", startRotation )
+				end
+				
+				local hideTarget = transition.to( target, { alpha=0, xScale=1.0, yScale=1.0, time=200, onComplete=stopRotation } )
+				
+				if ( myLine ) then
+					myLine.parent:remove( myLine )
+				end
+				
+				-- Strike the ball!
+				t:applyForce( (t.x - event.x), (t.y + displayGroup.y - event.y), t.x, t.y )
+				isAirborne = true
 			end
-			
-			-- Strike the ball!
-			t:applyForce( (t.x - event.x), (t.y + displayGroup.y - event.y), t.x, t.y )
 		end
 	end
 
@@ -126,6 +147,13 @@ local function onPreCollision(event)
 	local collideObject = event.other
 	if ( collideObject.collType == "passthru" ) and ( collideObject.y < cueball.y) then
 		event.contact.isEnabled = false  --disable this specific collision!
+	elseif (collideObject.collType == "enemy" ) then
+		print("Through!")
+		event.contact.isEnabled = false  --disable this specific collision!
+		local x,y = cueball:getLinearVelocity()
+		-- x = x - 10
+		y = y * 0.9
+		cueball:setLinearVelocity(x,y)
 	end
 end
 
@@ -154,22 +182,26 @@ local function update(event)
 		display.newText("Ya done goofed!",5,5,native.systemFont, 16*2)
 		runTouchTime = false
 		touchTimer = 0
+		isAirborne = false
 	end
 
 	displayGroup.y = -cueball.y + display.contentHeight * worldData.cameraOffset -- camera follows cueball
 end
 
 local function multiJump(event)
-	if event.phase == "began" then
-		local dx = cueball.x - event.x
-		local dy = cueball.y - event.y + displayGroup.y
+	if jumpCount ~= 0 and isAirborne == true then
+		if event.phase == "began" then
+			local dx = cueball.x - event.x
+			local dy = cueball.y - event.y + displayGroup.y
 
-		local a = math.atan2(dy, dx)
-		local x = math.cos(a)
-		local y = math.sin(a)
-		
-		cueball:setLinearVelocity(0, 0)
-		cueball:applyLinearImpulse(-x, -math.abs(y), cueball.x, cueball.y)
+			local a = math.atan2(dy, dx)
+			local x = math.cos(a)
+			local y = math.sin(a)
+			
+			cueball:setLinearVelocity(0, 0)
+			cueball:applyLinearImpulse(-x, -math.abs(y), cueball.x, cueball.y)
+			jumpCount = jumpCount - 1
+		end
 	end
 end
 
