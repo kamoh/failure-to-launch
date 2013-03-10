@@ -17,6 +17,9 @@ local bounceChannel
 local releaseHandle = audio.loadSound("audio/catapult2.wav")
 local releaseChannel
 
+local winHandle = audio.loadSound("audio/win.wav")
+local winChannel
+
 local physics = require "physics"
 physics.start()
 --physics.setDrawMode("hybrid")
@@ -142,6 +145,8 @@ timerText:setReferencePoint(display.BottomReferencePoint)
 timerText.x = display.contentWidth * .5
 timerText.y = display.contentHeight * .01
 
+local win = false
+
 local lastTime = os.time()
 local curTime = os.time()
 local hasChecked = false
@@ -171,6 +176,14 @@ local function updateHud()
 						money = money - jumpcost
 						jumpCount = jumpCount + 1
 					end
+				end
+				if job == "BOSS: Chief Executive Overlord" and win == false then
+					audio.stop(musicChannel)
+					winChannel = audio.play(winHandle)
+					local victory = display.newImage("images/victory.png")
+					victory.x = display.contentCenterX
+					victory.y = display.contentCenterY
+					win = true
 				end
 			elseif cueball.y >  -(levelData[i].y * display.contentHeight)  then
 				break
