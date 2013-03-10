@@ -6,7 +6,7 @@ local worldData = data.getWorldData()
 
 local physics = require "physics"
 physics.start()
---physics.setDrawMode("hybrid")
+physics.setDrawMode("hybrid")
 physics.setGravity(0, worldData.gravity)
 physics.setScale( worldData.physicsScale ) -- 60 seems good for small objects (based on playtesting)
 
