@@ -254,6 +254,7 @@ end
 
 cueball:addEventListener("touch", cueShot)
 
+local bleeding = false
 -- Local Player collision decision
 local function onPreCollision(event)
 	local collideObject = event.other
@@ -273,6 +274,22 @@ local function onPreCollision(event)
 end
 
 cueball:addEventListener("preCollision", onPreCollision)
+
+local function onCollision( event )
+	if event.other.collType == "pinkSlip" then
+        if ( event.phase == "began" ) then
+ 
+                bleeding = true
+ 
+        elseif ( event.phase == "ended" ) then
+ 
+                bleeding = false
+ 
+        end
+    end
+end
+
+cueball:addEventListener("collision", onCollision)
 
 --timer variables
 local touchTimer = 0
@@ -301,6 +318,13 @@ local function update(event)
 	end
 
 	displayGroup.y = -cueball.y + display.contentHeight * worldData.cameraOffset -- camera follows cueball
+
+	if bleeding == true then
+		-- print("BLOOOOOOOD")
+		money = money - 1
+		moneyText.text = ("$" .. money)
+	end
+
 	moveBackground()
 	updateHud()
 end
