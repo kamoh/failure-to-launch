@@ -121,11 +121,11 @@ local isAirborne = false
 local jumpCount = 5
 local money = 0
 local platformTime = 60 --One Minute, varies depending on if we're adding minigames.
-local zeroTitle = "Janitor"
+local zeroTitle = "LVL1: Retired Janitor"
 local job = zeroTitle
 local hudBackground = display.newRect(0,display.contentHeight * 0.86,display.contentWidth, display.contentHeight * 0.20)
 hudBackground:setFillColor( 50,50,50,200 )
-local levelText = display.newText("Janitor",display.contentWidth * .5 ,display.contentHeight * .99,native.systemFont, 16*2)
+local levelText = display.newText(zeroTitle,display.contentWidth * .5 ,display.contentHeight * .99,native.systemFont, 16*2)
 levelText:setReferencePoint(display.BottomReferencePoint)
 levelText.x = display.contentWidth * .5
 levelText.y = display.contentHeight * .99
@@ -144,6 +144,7 @@ timerText.y = display.contentHeight * .01
 
 local lastTime = os.time()
 local curTime = os.time()
+local hasChecked = false
 local function updateHud()
 	if platformTime ~= 0 then
 		curTime = os.time()
@@ -155,20 +156,32 @@ local function updateHud()
 
 	jumpText.text = jumpCount
 
-	if cueball.isAwake == false then --Add Toggle
+	if cueball.isAwake == false and hasChecked == false then --Add Toggle
 		for i=1 , #levelData do
 			print(i)
 			print("Current Y: " .. -(levelData[i].y * display.contentHeight))
 			print("Cueball Y: " .. cueball.y)
 			if cueball.y < -(levelData[i].y * display.contentHeight) then
 				job = levelData[i].job
+				money = money + (75 * (i-1))--*2)
+				local jumpcost = 50 * (i-1)
+				local c = 0
+				for c = 1, 5 do
+					if money > 50 then
+						money = money - jumpcost
+						jumpCount = jumpCount + 1
+					end
+				end
 			elseif cueball.y >  -(levelData[i].y * display.contentHeight)  then
 				break
 			end
 			print(i)
+			hasChecked = true
 		end
 		moneyText.text = ("$" .. money)
 		levelText.text = job
+	elseif cueball.isAwake == true  then
+		hasChecked = false
 	end
 end
 

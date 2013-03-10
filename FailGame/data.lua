@@ -28,12 +28,12 @@ function getLevelData()
 	local levelData = {
 	-- Level 0
 		{
-			job = "Janitor",
+			job = "LV1: Retired Janitor",
 			y = 0
 		},
 	-- Level 1
 		{
-			job = "Burger Monkey",
+			job = "LV2: Burger Monkey",
 			y = 2.0,
 			h = 0.03,
 			platforms = {
@@ -43,7 +43,7 @@ function getLevelData()
 		},
 	-- Level 2
 		{
-			job = "Master Shirt Folder",
+			job = "LV3: Master Shirt Folder",
 			y = 4.0,
 			h = 0.03,
 			platforms = {
@@ -54,7 +54,7 @@ function getLevelData()
 		},
 	-- Level 3
 		{
-			job = "Indentured Servent",
+			job = "LV4: Indentured Servant",
 			y = 6.0,
 			h = 0.03,
 			platforms = {
@@ -70,7 +70,7 @@ function getLevelData()
 		},
 	-- Level 4
 		{
-			job = "Senior Indentured Servent",
+			job = "LV5: Senior Indentured Servant",
 			y = 8.0,
 			h = 0.02,
 			platforms = {
@@ -86,7 +86,7 @@ function getLevelData()
 		},
 	-- Level 5
 		{
-			job = "Chair Warmer",
+			job = "LV6: Chair Warmer",
 			y = 10.0,
 			h = 0.02,
 			platforms = {
@@ -102,7 +102,7 @@ function getLevelData()
 		},
 	-- Level 6
 		{
-			job = "Chief Chair Warmer",
+			job = "LV7: Chief Chair Warmer",
 			y = 12.0,
 			h = 0.02,
 			platforms = {
@@ -119,7 +119,7 @@ function getLevelData()
 		},
 	-- Level 7
 		{
-			job = "Senior Chief Chair Warmer",
+			job = "LV8: Senior Chief Chair Warmer",
 			y = 14.0,
 			h = 0.01,
 			platforms = {
@@ -135,7 +135,7 @@ function getLevelData()
 		},
 	-- Level 8
 		{
-			job = "Executive Butler",
+			job = "LV9: Executive Butler",
 			y = 16.0,
 			h = 0.01,
 			platforms = {
@@ -152,7 +152,7 @@ function getLevelData()
 		},
 	-- Level 9
 		{
-			job = "Vice Slavedriver",
+			job = "Lv10: Vice Slavedriver",
 			y = 18.0,
 			h = 0.01,
 			platforms = {
@@ -170,7 +170,7 @@ function getLevelData()
 		},
 	-- Level 10
 		{
-			job = "Chief Executive Overlord",
+			job = "BOSS: Chief Executive Overlord",
 			y = 20.3,
 			h = 0.008,
 			platforms = {
