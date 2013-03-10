@@ -53,7 +53,7 @@ for i = 1, #levelData do
 end
 
 -- Create cueball
-local cueball = display.newImage( "images/ball_white.png" )
+local cueball = display.newImage( "images/dude72.png" )
 cueball.x = display.contentWidth * worldData.cueballX
 cueball.y = -display.contentHeight * worldData.cueballY
 displayGroup:insert(cueball)
@@ -102,7 +102,7 @@ local function cueShot( event )
 			
 			Runtime:addEventListener( "enterFrame", startRotation )
 			
-			local showTarget = transition.to( target, { alpha=0.4, xScale=0.4, yScale=0.4, time=200 } )
+			local showTarget = transition.to( target, { alpha=0.5, xScale=0.8, yScale=0.8, time=200 } )
 			myLine = nil
 
 		elseif t.isFocus then
@@ -123,7 +123,7 @@ local function cueShot( event )
 					Runtime:removeEventListener( "enterFrame", startRotation )
 				end
 				
-				local hideTarget = transition.to( target, { alpha=0, xScale=1.0, yScale=1.0, time=200, onComplete=stopRotation } )
+				local hideTarget = transition.to( target, { alpha=0, xScale=1.5, yScale=1.5, time=200, onComplete=stopRotation } )
 				
 				if ( myLine ) then
 					myLine.parent:remove( myLine )
@@ -148,12 +148,10 @@ local function onPreCollision(event)
 	if ( collideObject.collType == "passthru" ) and ( collideObject.y < cueball.y) then
 		event.contact.isEnabled = false  --disable this specific collision!
 	elseif (collideObject.collType == "pinkSlip" ) then
-		print("Through!")
 		event.contact.isEnabled = false  --disable this specific collision!
-		local x,y = cueball:getLinearVelocity()
-		-- x = x - 10
-		y = y * 0.9
-		cueball:setLinearVelocity(x,y)
+		local x, y = cueball:getLinearVelocity()
+		y = y * worldData.pinkSlipY
+		cueball:setLinearVelocity(x, y)
 	end
 end
 

@@ -12,6 +12,7 @@ function getWorldData()
 		cueballY = 0.1,
 		linearDamping = 0.3,
 		angularDamping = 1.0,
+		pinkSlipY = 0.9,
 		cameraOffset = 0.8,
 		jumpImpulse = 1.0,
 	}
