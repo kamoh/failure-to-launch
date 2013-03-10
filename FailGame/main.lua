@@ -1,6 +1,22 @@
 local data = require "data"
 local worldData = data.getWorldData()
 
+local musicHandle = audio.loadStream("audio/game_music.mp3")
+local musicChannel = audio.play(musicHandle, {loops = 1})
+audio.setVolume(0.2, {channel = musicChannel})
+
+local slingshotHandle = audio.loadSound("audio/slingshot1.wav")
+local slingshotChannel
+
+local jumpHandle = audio.loadSound("audio/jump.wav")
+local jumpChannel
+
+local bounceHandle = audio.loadSound("audio/bounce.wav")
+local bounceChannel
+
+local landHandle = audio.loadSound("audio/land.wav")
+local landChannel
+
 local physics = require "physics"
 physics.start()
 --physics.setDrawMode("hybrid")
@@ -39,7 +55,9 @@ local wallLength = display.contentHeight * worldData.wallLength
 local wallWidth = display.contentWidth * worldData.wallWidth
 
 local leftWall = display.newRect(0, -wallLength, wallWidth, wallLength)
+leftWall.collType = "wall"
 local rightWall = display.newRect(display.contentWidth - wallWidth, -wallLength, wallWidth, wallLength)
+rightWall.collType = "wall"
 local floor = display.newRect(0, 0, display.contentWidth, wallWidth)
 local ceiling = display.newRect(0, -wallLength, display.contentWidth, wallWidth)
 
@@ -130,6 +148,8 @@ local function cueShot( event )
 --	if isAirborne == false then
 		local phase = event.phase
 		if "began" == phase then
+			slingshotChannel = audio.play(slingshotHandle)
+
 			display.getCurrentStage():setFocus( t )
 			t.isFocus = true
 			
@@ -176,6 +196,8 @@ local function cueShot( event )
 				-- Strike the ball!
 				t:applyForce( (t.x - event.x), (t.y + displayGroup.y - event.y), t.x, t.y )
 				isAirborne = true
+
+				audio.stop(slingshotChannel)
 			end
 		end
 --	end
@@ -189,13 +211,20 @@ cueball:addEventListener("touch", cueShot)
 -- Local Player collision decision
 local function onPreCollision(event)
 	local collideObject = event.other
-	if ( collideObject.collType == "passthru" ) and ( collideObject.y < cueball.y) then
-		event.contact.isEnabled = false  --disable this specific collision!
-	elseif (collideObject.collType == "pinkSlip" ) then
+	if collideObject.collType == "passthru" then
+		if collideObject.y < cueball.y then
+			event.contact.isEnabled = false  --disable this specific collision!
+		else
+			landChannel = audio.play(landHandle)
+		end
+	elseif collideObject.collType == "pinkSlip" then
 		event.contact.isEnabled = false  --disable this specific collision!
 		local x, y = cueball:getLinearVelocity()
 		y = y * worldData.pinkSlipY
 		cueball:setLinearVelocity(x, y)
+	elseif collideObject.collType == "wall" then
+		bounceChannel = audio.play(bounceHandle)
+		audio.setVolume(0.2, {channel = bounceChannel})
 	end
 end
 
@@ -236,6 +265,7 @@ Runtime:addEventListener("enterFrame", update)
 local function multiJump(event)
 --	if jumpCount ~= 0 and isAirborne == true then
 		if event.phase == "began" then
+			jumpChannel = audio.play(jumpHandle)
 			local dx = cueball.x - event.x
 			local dy = cueball.y - event.y + displayGroup.y
 
