@@ -177,7 +177,7 @@ local function updateHud()
 						jumpCount = jumpCount + 1
 					end
 				end
-				if job == "Chief Executive Overlord" and win == false then
+				if job == "BOSS: Chief Executive Overlord" and win == false then
 					audio.stop(musicChannel)
 					winChannel = audio.play(winHandle)
 					local victory = display.newImage("images/victory.png")
