@@ -6,7 +6,7 @@ local worldData = data.getWorldData()
 
 local physics = require "physics"
 physics.start()
-physics.setDrawMode("hybrid")
+--physics.setDrawMode("hybrid")
 physics.setGravity(0, worldData.gravity)
 physics.setScale( worldData.physicsScale ) -- 60 seems good for small objects (based on playtesting)
 
@@ -44,7 +44,10 @@ for i = 1, #levelData do
 
 	if levelData[i].pinkSlips then
 		for key, object in pairs(levelData[i].pinkSlips) do
-			local pinkSlip = display.newRect(object.x * w, -object.y * h, object.s * w, object.s * w)
+--			local pinkSlip = display.newRect(object.x * w, -object.y * h, object.s * w, object.s * w)
+			local pinkSlip = display.newImage("images/pinkSlip.png")
+			pinkSlip:translate(object.x * w, -object.y * h)
+			pinkSlip:scale(object.s, object.s)
 			pinkSlip.collType = "pinkSlip"
 			displayGroup:insert(pinkSlip)
 			physics.addBody(pinkSlip, "static")
@@ -62,7 +65,6 @@ physics.addBody(cueball, ballBody)
 cueball.linearDamping = worldData.linearDamping
 cueball.angularDamping = worldData.angularDamping
 cueball.isBullet = true -- force continuous collision detection, to stop really fast shots from passing through other balls
-cueball.color = "white"
 
 target = display.newImage("images/target.png")
 target.x = cueball.x
