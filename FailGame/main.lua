@@ -188,6 +188,8 @@ local function update(event)
 	displayGroup.y = -cueball.y + display.contentHeight * worldData.cameraOffset -- camera follows cueball
 end
 
+Runtime:addEventListener("enterFrame", update)
+
 local function multiJump(event)
 	if jumpCount ~= 0 and isAirborne == true then
 		if event.phase == "began" then
@@ -206,4 +208,3 @@ local function multiJump(event)
 end
 
 Runtime:addEventListener("touch", multiJump)
-Runtime:addEventListener("enterFrame", update)
