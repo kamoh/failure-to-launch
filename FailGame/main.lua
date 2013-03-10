@@ -3,7 +3,7 @@ local worldData = data.getWorldData()
 
 local musicHandle = audio.loadStream("audio/game_music.mp3")
 local musicChannel = audio.play(musicHandle, {loops = 1})
-audio.setVolume(0.2, {channel = musicChannel})
+audio.setVolume(worldData.musicVolume, {channel = musicChannel})
 
 local slingshotHandle = audio.loadSound("audio/slingshot1.wav")
 local slingshotChannel
@@ -14,8 +14,8 @@ local jumpChannel
 local bounceHandle = audio.loadSound("audio/bounce.wav")
 local bounceChannel
 
-local landHandle = audio.loadSound("audio/land.wav")
-local landChannel
+local releaseHandle = audio.loadSound("audio/catapult2.wav")
+local releaseChannel
 
 local physics = require "physics"
 physics.start()
@@ -27,7 +27,6 @@ display.setStatusBar(display.HiddenStatusBar)
 local displayGroup = display.newGroup()
 
 local backgrounds = {}
-local backgroundColor = 64
 local backgroundHeight = 167
 local numBackgrounds = display.contentHeight / backgroundHeight + 2
 
@@ -35,7 +34,7 @@ for i = 0, numBackgrounds do
 	backgrounds[i] = display.newImage("images/layer1back2.png")
 	backgrounds[i].x = display.contentCenterX
 	backgrounds[i].y = i * -backgroundHeight - backgroundHeight/2
-	backgrounds[i]:setFillColor(backgroundColor, backgroundColor, backgroundColor)
+	backgrounds[i]:setFillColor(worldData.backgroundColor, worldData.backgroundColor, worldData.backgroundColor)
 	displayGroup:insert(backgrounds[i])
 end
 
@@ -211,6 +210,8 @@ local function cueShot( event )
 				myLine.width = 8
 
 			elseif "ended" == phase or "cancelled" == phase then
+				audio.stop(slingshotChannel)
+
 				display.getCurrentStage():setFocus( nil )
 				t.isFocus = false
 				
@@ -228,7 +229,8 @@ local function cueShot( event )
 				t:applyForce( (t.x - event.x), (t.y + displayGroup.y - event.y), t.x, t.y )
 				isAirborne = true
 
-				audio.stop(slingshotChannel)
+				releaseChannel = audio.play(releaseHandle)
+				audio.setVolume(worldData.releaseVolume, {channel = releaseChannel})
 			end
 		end
 --	end
@@ -245,8 +247,6 @@ local function onPreCollision(event)
 	if collideObject.collType == "passthru" then
 		if collideObject.y < cueball.y then
 			event.contact.isEnabled = false  --disable this specific collision!
-		else
-			landChannel = audio.play(landHandle)
 		end
 	elseif collideObject.collType == "pinkSlip" then
 		event.contact.isEnabled = false  --disable this specific collision!
@@ -255,7 +255,7 @@ local function onPreCollision(event)
 		cueball:setLinearVelocity(x, y)
 	elseif collideObject.collType == "wall" then
 		bounceChannel = audio.play(bounceHandle)
-		audio.setVolume(0.2, {channel = bounceChannel})
+		audio.setVolume(worldData.bounceVolume, {channel = bounceChannel})
 	end
 end
 
