@@ -2,8 +2,13 @@
 local wallWidth = 5
 local wallLength = 2
 
+--timer variables
+local touchTimer = 0
+local runTouchTime = false
+
 local physics = require "physics"
 physics.start()
+physics.setDrawMode("hybrid")
 
 --physics.setScale( 60 ) -- a value that seems good for small objects (based on playtesting)
 --physics.setGravity( 0, 0 )
@@ -37,6 +42,12 @@ cueball.linearDamping = 0.3
 cueball.angularDamping = 0.8
 cueball.isBullet = true -- force continuous collision detection, to stop really fast shots from passing through other balls
 cueball.color = "white"
+
+--Create platform
+local platform = display.newRect(100, 400, 100, 30)
+platform.collType = "passthru"
+game:insert(platform)
+physics.addBody(platform, "static", {bounce = 0.1})
 
 target = display.newImage( "images/target.png" )
 target.x = cueball.x
@@ -113,9 +124,40 @@ end
 
 cueball:addEventListener( "touch", cueShot )
 
--- Camera follows cueball automatically
-local function moveCamera()
+--updates every frame
+local function update(event)
+	local xVel = 0;
+	local yvel = 0;
+	print(cueball:getLinearVelocity())
+	xVel,yVel = cueball:getLinearVelocity()
+	if (yVel < 5 and runTouchTime == false) then
+		runTouchTime = true
+	end
+	if (yVel > 5 and runTouchTime == true) then
+		runTouchTime = false
+		touchTimer = 0
+	end
+	if runTouchTime then
+		touchTimer = touchTimer + 1
+	end
+	if touchTimer > 100 then
+		display.newText("Ya done goofed!",5,5,native.systemFont, 16*2)
+		runTouchTime = false
+		touchTimer = 0
+	end
+
 	game.y = -cueball.y + display.contentHeight * 0.8
 end
 
-Runtime:addEventListener( "enterFrame", moveCamera )
+-- Local Player collision decision
+local function onPreCollision(event)
+	print("PRE")
+	local collideObject = event.other
+	if ( collideObject.collType == "passthru" ) and ( collideObject.y < cueball.y) then
+		event.contact.isEnabled = false  --disable this specific collision!
+	end
+end
+
+cueball:addEventListener("preCollision", onPreCollision)
+
+Runtime:addEventListener( "enterFrame", update )
