@@ -7,7 +7,7 @@ function getWorldData()
 		wallLength = 30,
 		wallWidth = 0.01,
 		bounce = -10.0,
-		friction = 0.07,
+		friction = 0.045,
 		cueballX = 0.5,
 		cueballY = 0.1,
 		linearDamping = 0.3,
