@@ -1,5 +1,5 @@
-local data = require "data"
-local worldData = data.getWorldData()
+local worldData = require("worldData")
+
 
 local musicHandle = audio.loadStream("audio/game_music.mp3")
 local musicChannel = audio.play(musicHandle, {loops = 1})
@@ -20,14 +20,17 @@ local releaseChannel
 local winHandle = audio.loadSound("audio/win.wav")
 local winChannel
 
-local physics = require "physics"
+
+local physics = require("physics")
 physics.start()
 --physics.setDrawMode("hybrid")
 physics.setGravity(0, worldData.gravity)
 physics.setScale( worldData.physicsScale ) -- 60 seems good for small objects (based on playtesting)
 
+
 display.setStatusBar(display.HiddenStatusBar)
 local displayGroup = display.newGroup()
+
 
 local backgrounds = {}
 local backgroundHeight = 167
@@ -53,6 +56,7 @@ local function moveBackground()
 	end
 end
 
+
 local wallLength = display.contentHeight * worldData.wallLength
 local wallWidth = display.contentWidth * worldData.wallWidth
 
@@ -73,7 +77,8 @@ physics.addBody(rightWall, "static", {bounce = worldData.bounce, friction = worl
 physics.addBody(floor, "static", {bounce = worldData.bounce, friction = worldData.friction})
 physics.addBody(ceiling, "static", {bounce = worldData.bounce, friction = worldData.friction})
 
-local levelData = data.getLevelData()
+
+local levelData = require("stage" .. worldData.testLevel)
 
 --Create platforms
 for i = 2, #levelData do
