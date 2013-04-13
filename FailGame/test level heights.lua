@@ -7,30 +7,31 @@ local levelData = {
 -- Level 2
 	{
 		job = "LV2: Burger Monkey",
-		y = 2.0,
+		y = .1,
 		h = 0.03,
 		platforms = {
-			{x = 0, w = 0.4},
-			{x = 0.6, w = 0.4},
+		-- real y coordinates are 2.0
+			{x = 0, w = 0.6},
 		}
 	},
 -- Level 3
 	{
 		job = "LV3: Master Shirt Folder",
-		y = 4.0,
+		y = .15,
 		h = 0.03,
 		platforms = {
-			{x = 0, w = 0.23},
-			{x = 0.4, w = 0.23},
-			{x = 0.8, w = 0.23},
+		-- real y coordinates are 4.0
+			{x = 0.25, w = 0.28},
+			{x = 0.8, w = 0.3},
 		}
 	},
 -- Level 4
 	{
 		job = "LV4: Indentured Servant",
-		y = 6.0,
+		y = .2,
 		h = 0.03,
 		platforms = {
+		-- real y coordinates are 6.0
 			{x = 0.15, w = 0.24},
 			{x = 0.62, w = 0.24},
 		},
@@ -44,9 +45,10 @@ local levelData = {
 -- Level 5
 	{
 		job = "LV5: Senior Indentured Servant",
-		y = 8.0,
+		y = .25,
 		h = 0.02,
 		platforms = {
+		-- real y coordinates are 8.0
 			{x = 0, w = 0.3},
 			{x = 0.5, w = 0.3},
 		},
@@ -60,9 +62,10 @@ local levelData = {
 -- Level 6
 	{
 		job = "LV6: Chair Warmer",
-		y = 10.0,
+		y = .3,
 		h = 0.02,
 		platforms = {
+		-- real y coordinates are 10.0
 			{x = 0, w = 0.15},
 			{x = 0.3, w = 0.3},
 			{x = 0.85, w = 0.3},
@@ -76,9 +79,10 @@ local levelData = {
 -- Level 7
 	{
 		job = "LV7: Chief Chair Warmer",
-		y = 12.0,
+		y = .35,
 		h = 0.02,
 		platforms = {
+		-- real y coordinates are 12.0
 			{x = 0.23, w = 0.15},
 			{x = 0.53, w = 0.18},
 			{x = 0.85, w = 0.3},
@@ -93,9 +97,10 @@ local levelData = {
 -- Level 8
 	{
 		job = "LV8: Senior Chief Chair Warmer",
-		y = 14.0,
+		y = .4,
 		h = 0.01,
 		platforms = {
+		-- real y coordinates are 14.0
 			{x = 0, w = 0.15},
 			{x = 0.39, w = 0.20},
 			{x = 0.8, w = 0.23},
@@ -109,9 +114,10 @@ local levelData = {
 -- Level 9
 	{
 		job = "LV9: Executive Butler",
-		y = 16.0,
+		y = .45,
 		h = 0.01,
 		platforms = {
+		-- real y coordinates are 16.0
 			{x = 0.23, w = 0.15},
 			{x = 0.56, w = 0.12},
 			{x = 0.85, w = 0.3},
@@ -126,9 +132,10 @@ local levelData = {
 -- Level 10
 	{
 		job = "Lv10: Vice Slavedriver",
-		y = 18.0,
+		y = .5,
 		h = 0.01,
 		platforms = {
+		-- real y coordinates are 18.0
 			{x = 0.3, w = 0.15},
 			{x = 0.6, w = 0.15},
 		},
@@ -144,9 +151,10 @@ local levelData = {
 -- Level 11
 	{
 		job = "BOSS: Chief Executive Overlord",
-		y = 20.3,
-		h = 0.01,
+		y = .55,
+		h = 0.008,
 		platforms = {
+		-- real y coordinates are 20.3
 			{x = 0.45, w = 0.12},
 		},
 	},
