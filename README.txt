@@ -1,1 +1,1 @@
-if you see this file then I am a fucking genius
+Game jam for the AOL Games.com game jam
